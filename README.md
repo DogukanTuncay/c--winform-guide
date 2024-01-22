@@ -100,3 +100,108 @@ private void CheckIfDataExists()
             }
         }
 ```
+
+# değerleri işlemek için btnSave adında bir buton oluşturun, ve ardından bu kodu kopyalayabilirsiniz. Text değerleri formunuza göre değiştirin. Bunun için saveToDatabase ve  getText fonksiyonlarını düzenleyin.
+```
+ private void btnSave_Click(object sender, EventArgs e)
+        {
+
+            
+            string text = getText();
+            
+
+
+            imageSave();
+            saveToDatabase();
+            SaveDataToFile(text);
+            MailGonderme(text);
+
+        }
+
+        private void imageSave()
+        {
+            // Uygulama klasöründe bir 'Images' klasörü oluştur
+            string imagesFolderPath = Path.Combine(Application.StartupPath, "Images");
+            Directory.CreateDirectory(imagesFolderPath);
+            if(selectedImagePath != "")
+            {
+                // Resmi yeni klasöre kopyala
+                string destPath = Path.Combine(imagesFolderPath, Path.GetFileName(selectedImagePath));
+                File.Copy(selectedImagePath, destPath, true);
+            }
+          
+        }
+        private void saveToDatabase()
+        {
+            string name = txtName.Text;
+            string email = txtEmail.Text;
+
+            string image = Path.GetFileName(selectedImagePath);
+            // SQLite bağlantı dizesi
+            using (SQLiteConnection conn = new SQLiteConnection(connectionString))
+            {
+                conn.Open();
+
+                string sql = "INSERT INTO Contacts (Name, Email, ImageUrl) VALUES (@Name, @Email, @ImageUrl)";
+                using (SQLiteCommand cmd = new SQLiteCommand(sql, conn))
+                {
+                    // Burada kullanıcıdan alınan diğer verileri ekleyin
+                    // Örneğin:
+                    cmd.Parameters.AddWithValue("@Name", name);
+                    cmd.Parameters.AddWithValue("@Email", email);
+                    cmd.Parameters.AddWithValue("@ImageUrl", image);
+
+                    cmd.ExecuteNonQuery();
+                    CheckIfDataExists();
+                }
+            }
+        }
+        private void MailGonderme(string message)
+        {
+            try
+            {
+                //MailMessage mail = new MailMessage();
+                //SmtpClient SmtpServer = new SmtpClient("your_smtp_server");
+                //mail.From = new MailAddress("your_email_address");
+                //mail.To.Add("recipient_email_address");
+                //mail.Subject = "E-posta Konusu";
+                //mail.Body = "message";
+
+                //// Eğer SMTP sunucunuz kimlik doğrulaması gerektiriyorsa:
+                //SmtpServer.Port = 587; // veya kullanılan porta göre değiştirin
+                //SmtpServer.Credentials = new NetworkCredential("username", "password");
+                //SmtpServer.EnableSsl = true; // Sunucu SSL gerektiriyorsa
+
+                //SmtpServer.Send(mail);
+                MessageBox.Show("E-posta Gönderildi.");
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Hata: " + ex.Message);
+            }
+        }
+
+        private void SaveDataToFile(string message)
+        {
+            string filePath = "savedData.txt"; // Metin dosyasının yolu ve adı
+           
+
+            try
+            {
+                using (StreamWriter writer = new StreamWriter(filePath, true)) // 'true' dosyaya eklemek için
+                {
+                    writer.WriteLine(message);
+                }
+
+                MessageBox.Show("Veriler dosyaya kaydedildi.");
+
+
+               
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Dosyaya kaydederken hata oluştu: " + ex.Message);
+            }
+        }
+```
