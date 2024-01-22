@@ -1,5 +1,12 @@
 # cSharp-winform-guide
 A Winform Guide For  my c# Exam
+
+# For your Global variables dont forget the add this lines :
+```
+ public string connectionString = "Data Source=test.db;Version=3";
+string selectedImagePath = "";
+```
+
 ## Add Database Connection With Datagridview, This add a Contextmenustrip to Form1_Load, Dont use two times Form1_Load func on your project. 
 ```
 private void CheckIfDataExists()
