@@ -7,7 +7,7 @@ A Winform Guide For  my c# Exam
 string selectedImagePath = "";
 ```
 
-## Add Database Connection With Datagridview, This add a Contextmenustrip to Form1_Load, Dont use two times Form1_Load func on your project. 
+# Add Database Connection With Datagridview, This add a Contextmenustrip to Form1_Load, Dont use two times Form1_Load func on your project. 
 ```
 private void CheckIfDataExists()
         {
@@ -210,5 +210,13 @@ private void CheckIfDataExists()
             {
                 MessageBox.Show("Dosyaya kaydederken hata oluştu: " + ex.Message);
             }
+        }
+        public string getText()
+        {
+            string name = txtName.Text;
+            string email = txtEmail.Text;
+            string image = Path.GetFileName(selectedImagePath);
+            string message = $"Name: {name}, Email: {email}, Image: {image}";
+            return message;
         }
 ```
