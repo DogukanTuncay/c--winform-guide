@@ -1,5 +1,21 @@
 # cSharp-winform-guide
 A Winform Guide For  my c# Exam
+# This is system namespaces
+```
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Data.SQLite;
+using System.Drawing;
+using System.Linq;
+using System.IO;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Net.Mail;
+using System.Net;
+```
 
 # For your Global variables dont forget the add this lines :
 ```
@@ -219,4 +235,66 @@ private void CheckIfDataExists()
             string message = $"Name: {name}, Email: {email}, Image: {image}";
             return message;
         }
+```
+# For Delete Row with ID
+```
+private void btnSil_Click(object sender, EventArgs e)
+{
+    // TextBox'tan girilen veriyi al
+    string girilenVeri = txtId.Text;
+
+    // Girilen verinin sayı olup olmadığını kontrol et
+    if (int.TryParse(girilenVeri, out int sayi))
+    {
+        // Veri var mı diye kontrol et
+        if (VeriVarMi("Contacts", "ID", sayi))
+        {
+            // Silme işlemi için SQL sorgusu
+            string deleteQuery = "DELETE FROM Contacts WHERE ID = @ID";
+
+            using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+            {
+                connection.Open();
+                using (SQLiteCommand command = new SQLiteCommand(deleteQuery, connection))
+                {
+                    // Parametre ekleyerek SQL sorgusunu hazırla
+                    command.Parameters.AddWithValue("@ID", sayi);
+                    command.ExecuteNonQuery();
+                }
+            }
+            LoadDataGridView();
+            //MessageBox.Show("Veri başarıyla silindi.");
+        }
+        else
+        {
+            MessageBox.Show("Belirtilen ID ile eşleşen veri bulunamadı.");
+        }
+    }
+    else
+    {
+        MessageBox.Show("Geçerli bir sayı giriniz.");
+    }
+}
+
+private bool VeriVarMi(string tableName, string columnName, int kontrolEdilecekID)
+ {
+     // Veri var mı diye kontrol etme işlemi için SQL sorgusu
+     string selectQuery = $"SELECT COUNT(*) FROM {tableName} WHERE {columnName} = @ID";
+
+     using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+     {
+         connection.Open();
+         using (SQLiteCommand command = new SQLiteCommand(selectQuery, connection))
+         {
+             // Parametre ekleyerek SQL sorgusunu hazırla
+             command.Parameters.AddWithValue("@ID", kontrolEdilecekID);
+
+             // Sorguyu çalıştır ve dönen sonucu kontrol et
+             int rowCount = Convert.ToInt32(command.ExecuteScalar());
+
+             return rowCount > 0;
+         }
+     }
+ }
+
 ```
